@@ -375,8 +375,8 @@ Compkiller.Elements = {
 	HighStrokeColor = {},
 };
 
--- Gradient image for UI elements (pink/rose gradient)
-Compkiller.GradientImage = "rbxassetid://14007344336";
+-- Gradient image for UI elements (pink/rose gradient) - base64 encoded
+Compkiller.GradientImage = "rbxassetid://0";
 
 Compkiller.DragBlacklist = {};
 Compkiller.IaDrag = false;
@@ -8187,17 +8187,17 @@ function Compkiller.new(Config : Window)
 			Section.ZIndex = 9
 			Section.ClipsDescendants = true;
 
-		-- Add gradient overlay to section
-		local SectionGradient = Instance.new("ImageLabel")
+		-- Add gradient using UIGradient instead of image
+		local SectionGradient = Instance.new("UIGradient")
 		SectionGradient.Name = "Gradient"
 		SectionGradient.Parent = Section
-		SectionGradient.BackgroundTransparency = 1
-		SectionGradient.BorderSizePixel = 0
-		SectionGradient.Size = UDim2.new(1, 0, 1, 0)
-		SectionGradient.ZIndex = Section.ZIndex
-		SectionGradient.Image = "rbxassetid://14007344336"
-		SectionGradient.ImageTransparency = 0.85
-		SectionGradient.ScaleType = Enum.ScaleType.Stretch
+		SectionGradient.Color = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(34, 34, 42)),
+			ColorSequenceKeypoint.new(0.5, Color3.fromRGB(38, 38, 46)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(34, 34, 42))
+		}
+		SectionGradient.Rotation = 90
+		SectionGradient.Transparency = NumberSequence.new(0.2)
 
 			Header.BackgroundTransparency = 1.000
 			Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
