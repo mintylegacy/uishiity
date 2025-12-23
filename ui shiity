@@ -5366,6 +5366,20 @@ function Compkiller.new(Config : Window)
 	MainFrame.Size = Compkiller.Scale.Window
 	MainFrame.ZIndex = 4
 
+	-- Add gradient background image
+	local GradientImage = Instance.new("ImageLabel")
+	GradientImage.Name = "GradientBG"
+	GradientImage.Parent = MainFrame
+	GradientImage.BackgroundTransparency = 1
+	GradientImage.BorderSizePixel = 0
+	GradientImage.Size = UDim2.new(1, 0, 1, 0)
+	GradientImage.Position = UDim2.new(0, 0, 0, 0)
+	GradientImage.ZIndex = 4
+	GradientImage.Image = "rbxassetid://14007344336"
+	GradientImage.ImageTransparency = 0.95
+	GradientImage.ScaleType = Enum.ScaleType.Tile
+	GradientImage.TileSize = UDim2.new(0, 500, 0, 500)
+
 	MainFrame:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
 		if MainFrame.BackgroundTransparency > 0.9 then
 			MainFrame.Visible = false;
@@ -5401,6 +5415,20 @@ function Compkiller.new(Config : Window)
 	TabFrame.Size = UDim2.new(0, 85, 1, 0)
 
 	UICorner_2.Parent = TabFrame
+
+	-- Add gradient background to TabFrame
+	local TabGradientImage = Instance.new("ImageLabel")
+	TabGradientImage.Name = "GradientBG"
+	TabGradientImage.Parent = TabFrame
+	TabGradientImage.BackgroundTransparency = 1
+	TabGradientImage.BorderSizePixel = 0
+	TabGradientImage.Size = UDim2.new(1, 0, 1, 0)
+	TabGradientImage.Position = UDim2.new(0, 0, 0, 0)
+	TabGradientImage.ZIndex = 4
+	TabGradientImage.Image = "rbxassetid://14007344336"
+	TabGradientImage.ImageTransparency = 0.95
+	TabGradientImage.ScaleType = Enum.ScaleType.Tile
+	TabGradientImage.TileSize = UDim2.new(0, 500, 0, 500)
 
 	LineFrame1.Name = Compkiller:_RandomString()
 	LineFrame1.Parent = TabFrame
