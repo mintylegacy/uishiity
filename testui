@@ -5,7 +5,8 @@
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
-    Original: compkiller.net6
+    Original: compkiller.net
+	3
 --]]
 
 --- Export Types ---
@@ -343,8 +344,6 @@ local Compkiller = {
 	},
 	ArcylicParent = CurrentCamera,
 	ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s; end,
-	WatermarkFrame = nil,
-	KeybindListFrame = nil,
 };
 
 Compkiller.Colors = {
@@ -8492,9 +8491,10 @@ function Compkiller.new(Config : Window)
 			Watermark.Parent = CompKiller
 			Watermark.AnchorPoint = Vector2.new(0, 0)
 			Watermark.BackgroundColor3 = Compkiller.Colors.BGDBColor
-		
-		-- Store reference globally
-		Compkiller.WatermarkFrame = Watermark
+
+			table.insert(Compkiller.Elements.BGDBColor,{
+				Element = Watermark,
+				Property = 'BackgroundColor3'
 			});
 
 			Watermark.BackgroundTransparency = 0.025
@@ -8503,22 +8503,8 @@ function Compkiller.new(Config : Window)
 			Watermark.Position = UDim2.new(0, 10, 0, 40)
 			Watermark.Size = UDim2.new(0, 45, 0, 23)
 			Watermark.ZIndex = 150
-
-			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
-				if ImageLabel.ClipsDescendants then
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 60, 0, 40)
-					})
-				else
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 10, 0, 40)
-					})
-				end;
-			end)
-
-			UICorner.CornerRadius = UDim.new(0, 3)
-			UICorner.Parent = Watermark
-
+		
+		Compkiller.WatermarkElement = Watermark
 			Logo.Name = Compkiller:_RandomString()
 			Logo.Parent = Watermark
 			Logo.AnchorPoint = Vector2.new(1, 0.5)
@@ -8701,8 +8687,8 @@ function Compkiller.new(Config : Window)
 		KeybindListFrame.ZIndex = 150
 		KeybindListFrame.ClipsDescendants = true
 		
-		-- Store reference globally
-		Compkiller.KeybindListFrame = KeybindListFrame
+		-- Store reference for config loading
+		Compkiller.KeybindListElement = KeybindListFrame;
 
 		table.insert(Compkiller.Elements.BGDBColor, {
 			Element = KeybindListFrame,
@@ -8862,23 +8848,18 @@ function Compkiller.new(Config : Window)
 		return Args;
 	end;
 
+	function WindowArgs:Toggle(Value: boolean)
+		WindowArgs.IsOpen = Value;
+		WindowOpen:Fire(Value);
+	end;
+	
 	function WindowArgs:_ToggleUI()
-		WindowArgs.IsOpen = not WindowArgs.IsOpen;
-		
-		if WindowArgs.IsOpen then
-			Compkiller:_Animation(MainFrame, TweenInfo.new(0.2), {
-				Size = UDim2.new(0, Config.Scale.X.Offset, 0, Config.Scale.Y.Offset)
-			});
-		else
-			Compkiller:_Animation(MainFrame, TweenInfo.new(0.2), {
-				Size = UDim2.new(0, 0, 0, 0)
-			});
-		end;
+		WindowArgs:Toggle(not WindowArgs.IsOpen);
 	end;
 
 	local Button = Compkiller:_Input(CloseWindow,function()
-			WindowArgs:_ToggleUI()
-		end)
+		WindowArgs:_ToggleUI()
+	end)
 
 		if not Compkiller:_IsMobile() then
 
@@ -8920,10 +8901,9 @@ function Compkiller.new(Config : Window)
 		UserInputService.InputBegan:Connect(function(Input,Typing)
 			if Typing then return end
 			
-			local inputKey = Input.KeyCode.Name
 			local configKey = typeof(Config.Keybind) == "EnumItem" and Config.Keybind.Name or Config.Keybind
 			
-			if inputKey == configKey then
+			if Input.KeyCode.Name == configKey or Input.UserInputType.Name == configKey then
 				WindowArgs:_ToggleUI()
 			end
 		end)
@@ -9309,25 +9289,21 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			-- Load UI positions
 			if decoded.__WATERMARK_POSITION then
 				local pos = decoded.__WATERMARK_POSITION;
-				if pos and pos.X_Scale and pos.X_Offset and pos.Y_Scale and pos.Y_Offset then
-					Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
-					
-					-- Apply to existing watermark if it exists
-					if Compkiller.WatermarkFrame then
-						Compkiller.WatermarkFrame.Position = Compkiller.SavedWatermarkPosition;
-					end;
+				local newPos = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				Compkiller.SavedWatermarkPosition = newPos;
+				-- Apply to actual UI element if it exists
+				if Compkiller.WatermarkElement then
+					Compkiller.WatermarkElement.Position = newPos;
 				end;
 			end;
 			
 			if decoded.__KEYBINDLIST_POSITION then
 				local pos = decoded.__KEYBINDLIST_POSITION;
-				if pos and pos.X_Scale and pos.X_Offset and pos.Y_Scale and pos.Y_Offset then
-					Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
-					
-					-- Apply to existing keybind list if it exists
-					if Compkiller.KeybindListFrame then
-						Compkiller.KeybindListFrame.Position = Compkiller.SavedKeybindListPosition;
-					end;
+				local newPos = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				Compkiller.SavedKeybindListPosition = newPos;
+				-- Apply to actual UI element if it exists
+				if Compkiller.KeybindListElement then
+					Compkiller.KeybindListElement.Position = newPos;
 				end;
 			end;
 
