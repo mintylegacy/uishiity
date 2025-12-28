@@ -6,8 +6,9 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
+	3
 --]]
-print("2")
+
 --- Export Types ---
 
 export type cloneref = (target: Instance) -> Instance;
@@ -8606,21 +8607,10 @@ function Compkiller.new(Config : Window)
 			function Args:AddText(Watermark : Watermark)
 				Watermark = Compkiller.__CONFIG(Watermark, {
 					Text = "Watermark",
-					Icon = "info"
+					Icon = ""
 				});
 
-				local Icon = Instance.new("ImageLabel")
 				local TextLabel = Instance.new("TextLabel")
-
-				Icon.Name = Compkiller:_RandomString()
-				Icon.Parent = WaternarkList
-				Icon.BackgroundTransparency = 1.000
-				Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
-				Icon.BorderSizePixel = 0
-				Icon.Size = UDim2.fromOffset(15,15)
-				Icon.SizeConstraint = Enum.SizeConstraint.RelativeYY
-				Icon.ZIndex = 156
-				Icon.Image = Compkiller:_GetIcon(Watermark.Icon);
 
 				TextLabel.Parent = WaternarkList
 				TextLabel.BackgroundTransparency = 1.000
@@ -8655,7 +8645,6 @@ function Compkiller.new(Config : Window)
 				end;
 
 				function Arg:Visible(v)
-					Icon.Visible = v;
 					TextLabel.Visible = v;
 				end;
 
@@ -8726,7 +8715,7 @@ function Compkiller.new(Config : Window)
 		Title.Position = UDim2.new(0, 0, 0, 0)
 		Title.Size = UDim2.new(1, 0, 0, 25)
 		Title.ZIndex = 151
-		Title.Font = Enum.Font.GothamBold
+		Title.Font = Enum.Font.GothamMedium
 		Title.Text = "keybinds"
 		Title.TextColor3 = Compkiller.Colors.SwitchColor
 		Title.TextSize = 12
@@ -8776,19 +8765,20 @@ function Compkiller.new(Config : Window)
 			local KeybindFrame = Instance.new("Frame")
 			local KeybindName = Instance.new("TextLabel")
 			local KeybindKey = Instance.new("TextLabel")
+			local Separator = Instance.new("Frame")
 
 			KeybindFrame.Name = Compkiller:_RandomString()
 			KeybindFrame.Parent = KeybindContainer
 			KeybindFrame.BackgroundTransparency = 1
-			KeybindFrame.Size = UDim2.new(1, 0, 0, 18)
+			KeybindFrame.Size = UDim2.new(1, 0, 0, 20)
 			KeybindFrame.ZIndex = 152
 
 			KeybindName.Name = Compkiller:_RandomString()
 			KeybindName.Parent = KeybindFrame
 			KeybindName.BackgroundTransparency = 1
-			KeybindName.Size = UDim2.new(0.65, 0, 1, 0)
+			KeybindName.Size = UDim2.new(0.65, 0, 1, -2)
 			KeybindName.ZIndex = 152
-			KeybindName.Font = Enum.Font.Gotham
+			KeybindName.Font = Enum.Font.GothamMedium
 			KeybindName.Text = Name
 			KeybindName.TextColor3 = Compkiller.Colors.SwitchColor
 			KeybindName.TextSize = 10
@@ -8804,7 +8794,7 @@ function Compkiller.new(Config : Window)
 			KeybindKey.Parent = KeybindFrame
 			KeybindKey.BackgroundTransparency = 1
 			KeybindKey.Position = UDim2.new(0.65, 0, 0, 0)
-			KeybindKey.Size = UDim2.new(0.35, 0, 1, 0)
+			KeybindKey.Size = UDim2.new(0.35, 0, 1, -2)
 			KeybindKey.ZIndex = 152
 			KeybindKey.Font = Enum.Font.GothamMedium
 			KeybindKey.Text = "[" .. Key .. "]"
@@ -8816,6 +8806,14 @@ function Compkiller.new(Config : Window)
 				Element = KeybindKey,
 				Property = 'TextColor3'
 			});
+
+			Separator.Name = Compkiller:_RandomString()
+			Separator.Parent = KeybindFrame
+			Separator.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+			Separator.BorderSizePixel = 0
+			Separator.Position = UDim2.new(0, 0, 1, -1)
+			Separator.Size = UDim2.new(1, 0, 0, 1)
+			Separator.ZIndex = 152
 
 			UpdateSize();
 
