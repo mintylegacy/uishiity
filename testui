@@ -1,13 +1,13 @@
 --[[
     		Compkiller Interface
-
+    
     Author: 4lpaca
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
 --]]
-
+-- um
 --- Export Types ---
 
 export type cloneref = (target: Instance) -> Instance;
@@ -8499,18 +8499,18 @@ function Compkiller.new(Config : Window)
 			Watermark.BackgroundTransparency = 0.025
 			Watermark.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			Watermark.BorderSizePixel = 0
-			Watermark.Position = UDim2.new(0, 70, 0, 100)
+			Watermark.Position = UDim2.new(0, 10, 0, 40)
 			Watermark.Size = UDim2.new(0, 45, 0, 23)
 			Watermark.ZIndex = 150
 
 			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
 				if ImageLabel.ClipsDescendants then
 					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 70, 0, 100)
+						Position = UDim2.new(0, 60, 0, 40)
 					})
 				else
 					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 40, 0, 100)
+						Position = UDim2.new(0, 10, 0, 40)
 					})
 				end;
 			end)
@@ -8662,19 +8662,34 @@ function Compkiller.new(Config : Window)
 				return Arg;
 			end;
 
-			return Args;
+		function Args:UpdateText(text)
+			for _, child in pairs(WaternarkList:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.Text = text;
+					local scale = TextService:GetTextSize(child.Text, child.TextSize, child.Font, Vector2.new(math.huge, math.huge));
+					child.Size = UDim2.new(0, scale.X + 2, 0.7, 0);
+					break;
+				end;
+			end;
+		end;
+		
+		function Args:SetVisible(Visible: boolean)
+			Watermark.Visible = Visible;
 		end;
 
-		function WindowArgs:Toggle(Value: boolean)
-			if WindowArgs.PerformanceMode then
-				MainFrame.Visible = Value;
-			end;
+		-- Make draggable
+		Compkiller:Drag(Watermark, Watermark, 0.1);
+		
+		-- Load saved position
+		if Compkiller.SavedWatermarkPosition then
+			Watermark.Position = Compkiller.SavedWatermarkPosition;
+		end;
+		
+		-- Save position when dragged
+		Watermark:GetPropertyChangedSignal("Position"):Connect(function()
+			Compkiller.SavedWatermarkPosition = Watermark.Position;
+		end);
 
-			WindowOpen:Fire(Value);
-
-			if Value then
-				for i,v in next , WindowArgs.Tabs do
-					if v.Root == WindowArgs.SelectedTab then
 						v.Remote:Fire(true);
 					end;
 				end;
@@ -8981,6 +8996,25 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			Name = Config.Name,
 			CreatedDate = Compkiller:GetDate()
 		};
+		
+		-- Save UI positions
+		if Compkiller.SavedWatermarkPosition then
+			Flags["__WATERMARK_POSITION"] = {
+				X_Scale = Compkiller.SavedWatermarkPosition.X.Scale,
+				X_Offset = Compkiller.SavedWatermarkPosition.X.Offset,
+				Y_Scale = Compkiller.SavedWatermarkPosition.Y.Scale,
+				Y_Offset = Compkiller.SavedWatermarkPosition.Y.Offset
+			};
+		end;
+		
+		if Compkiller.SavedKeybindListPosition then
+			Flags["__KEYBINDLIST_POSITION"] = {
+				X_Scale = Compkiller.SavedKeybindListPosition.X.Scale,
+				X_Offset = Compkiller.SavedKeybindListPosition.X.Offset,
+				Y_Scale = Compkiller.SavedKeybindListPosition.Y.Scale,
+				Y_Offset = Compkiller.SavedKeybindListPosition.Y.Offset
+			};
+		end;
 
 		if Args.EnableNotify then
 			notify.new({
@@ -9096,6 +9130,17 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			local decoded = HttpService:JSONDecode(info);
 
 			local Flags = Compkiller:GetConfig("KV");
+			
+			-- Load UI positions
+			if decoded.__WATERMARK_POSITION then
+				local pos = decoded.__WATERMARK_POSITION;
+				Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+			end;
+			
+			if decoded.__KEYBINDLIST_POSITION then
+				local pos = decoded.__KEYBINDLIST_POSITION;
+				Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+			end;
 
 			if Args.EnableNotify then
 				notify.new({
