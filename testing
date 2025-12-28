@@ -7,7 +7,7 @@
     Version: 2.3
     Original: compkiller.net
 --]]
-
+print("2")
 --- Export Types ---
 
 export type cloneref = (target: Instance) -> Instance;
