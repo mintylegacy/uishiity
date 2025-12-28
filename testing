@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	3
+	4
 --]]
 
 --- Export Types ---
@@ -8909,7 +8909,7 @@ function Compkiller.new(Config : Window)
 		UserInputService.InputBegan:Connect(function(Input,Typing)
 			if Typing then return end
 			
-			local inputKey = Input.KeyCode.Name
+			local inputKey = Input.KeyCode ~= Enum.KeyCode.Unknown and Input.KeyCode.Name or Input.UserInputType.Name
 			local configKey = typeof(Config.Keybind) == "EnumItem" and Config.Keybind.Name or Config.Keybind
 			
 			if inputKey == configKey then
