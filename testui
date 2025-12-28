@@ -6,8 +6,9 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
+	4
 --]]
-print("hm")
+
 --- Export Types ---
 
 export type cloneref = (target: Instance) -> Instance;
@@ -346,8 +347,8 @@ local Compkiller = {
 };
 
 Compkiller.Colors = {
-	Highlight = Color3.fromRGB(17, 238, 253),
-	Toggle = Color3.fromRGB(14, 203, 213),
+	Highlight = Color3.fromRGB(150, 150, 150),
+	Toggle = Color3.fromRGB(120, 120, 120),
 	Risky = Color3.fromRGB(251, 255, 39),
 	BGDBColor = Color3.fromRGB(22, 24, 29),
 	BlockColor = Color3.fromRGB(28, 29, 34),
@@ -8490,10 +8491,9 @@ function Compkiller.new(Config : Window)
 			Watermark.Parent = CompKiller
 			Watermark.AnchorPoint = Vector2.new(0, 0)
 			Watermark.BackgroundColor3 = Compkiller.Colors.BGDBColor
-
-			table.insert(Compkiller.Elements.BGDBColor,{
-				Element = Watermark,
-				Property = 'BackgroundColor3'
+		
+		-- Store reference globally
+		Compkiller.WatermarkFrame = Watermark
 			});
 
 			Watermark.BackgroundTransparency = 0.025
@@ -8606,21 +8606,10 @@ function Compkiller.new(Config : Window)
 			function Args:AddText(Watermark : Watermark)
 				Watermark = Compkiller.__CONFIG(Watermark, {
 					Text = "Watermark",
-					Icon = "info"
+					Icon = ""
 				});
 
-				local Icon = Instance.new("ImageLabel")
 				local TextLabel = Instance.new("TextLabel")
-
-				Icon.Name = Compkiller:_RandomString()
-				Icon.Parent = WaternarkList
-				Icon.BackgroundTransparency = 1.000
-				Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
-				Icon.BorderSizePixel = 0
-				Icon.Size = UDim2.fromOffset(15,15)
-				Icon.SizeConstraint = Enum.SizeConstraint.RelativeYY
-				Icon.ZIndex = 156
-				Icon.Image = Compkiller:_GetIcon(Watermark.Icon);
 
 				TextLabel.Parent = WaternarkList
 				TextLabel.BackgroundTransparency = 1.000
@@ -8655,7 +8644,6 @@ function Compkiller.new(Config : Window)
 				end;
 
 				function Arg:Visible(v)
-					Icon.Visible = v;
 					TextLabel.Visible = v;
 				end;
 
@@ -8711,6 +8699,9 @@ function Compkiller.new(Config : Window)
 		KeybindListFrame.Size = UDim2.new(0, 200, 0, 25)
 		KeybindListFrame.ZIndex = 150
 		KeybindListFrame.ClipsDescendants = true
+		
+		-- Store reference globally
+		Compkiller.KeybindListFrame = KeybindListFrame
 
 		table.insert(Compkiller.Elements.BGDBColor, {
 			Element = KeybindListFrame,
@@ -8726,7 +8717,7 @@ function Compkiller.new(Config : Window)
 		Title.Position = UDim2.new(0, 0, 0, 0)
 		Title.Size = UDim2.new(1, 0, 0, 25)
 		Title.ZIndex = 151
-		Title.Font = Enum.Font.GothamBold
+		Title.Font = Enum.Font.GothamMedium
 		Title.Text = "keybinds"
 		Title.TextColor3 = Compkiller.Colors.SwitchColor
 		Title.TextSize = 12
@@ -8776,19 +8767,20 @@ function Compkiller.new(Config : Window)
 			local KeybindFrame = Instance.new("Frame")
 			local KeybindName = Instance.new("TextLabel")
 			local KeybindKey = Instance.new("TextLabel")
+			local Separator = Instance.new("Frame")
 
 			KeybindFrame.Name = Compkiller:_RandomString()
 			KeybindFrame.Parent = KeybindContainer
 			KeybindFrame.BackgroundTransparency = 1
-			KeybindFrame.Size = UDim2.new(1, 0, 0, 18)
+			KeybindFrame.Size = UDim2.new(1, 0, 0, 20)
 			KeybindFrame.ZIndex = 152
 
 			KeybindName.Name = Compkiller:_RandomString()
 			KeybindName.Parent = KeybindFrame
 			KeybindName.BackgroundTransparency = 1
-			KeybindName.Size = UDim2.new(0.65, 0, 1, 0)
+			KeybindName.Size = UDim2.new(0.65, 0, 1, -2)
 			KeybindName.ZIndex = 152
-			KeybindName.Font = Enum.Font.Gotham
+			KeybindName.Font = Enum.Font.GothamMedium
 			KeybindName.Text = Name
 			KeybindName.TextColor3 = Compkiller.Colors.SwitchColor
 			KeybindName.TextSize = 10
@@ -8804,7 +8796,7 @@ function Compkiller.new(Config : Window)
 			KeybindKey.Parent = KeybindFrame
 			KeybindKey.BackgroundTransparency = 1
 			KeybindKey.Position = UDim2.new(0.65, 0, 0, 0)
-			KeybindKey.Size = UDim2.new(0.35, 0, 1, 0)
+			KeybindKey.Size = UDim2.new(0.35, 0, 1, -2)
 			KeybindKey.ZIndex = 152
 			KeybindKey.Font = Enum.Font.GothamMedium
 			KeybindKey.Text = "[" .. Key .. "]"
@@ -8816,6 +8808,14 @@ function Compkiller.new(Config : Window)
 				Element = KeybindKey,
 				Property = 'TextColor3'
 			});
+
+			Separator.Name = Compkiller:_RandomString()
+			Separator.Parent = KeybindFrame
+			Separator.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+			Separator.BorderSizePixel = 0
+			Separator.Position = UDim2.new(0, 0, 1, -1)
+			Separator.Size = UDim2.new(1, 0, 0, 1)
+			Separator.ZIndex = 152
 
 			UpdateSize();
 
@@ -8909,10 +8909,15 @@ function Compkiller.new(Config : Window)
 		end));
 
 		UserInputService.InputBegan:Connect(function(Input,Typing)
-			if not Typing and (Input.KeyCode == Config.Keybind or Input.KeyCode.Name == Config.Keybind) then
+			if Typing then return end
+			
+			local inputKey = Input.KeyCode.Name
+			local configKey = typeof(Config.Keybind) == "EnumItem" and Config.Keybind.Name or Config.Keybind
+			
+			if inputKey == configKey then
 				WindowArgs:_ToggleUI()
-			end;
-		end);
+			end
+		end)
 	end;
 
 	function WindowArgs:SetMenuKey(new: string | Enum.KeyCode)
@@ -9296,11 +9301,21 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			if decoded.__WATERMARK_POSITION then
 				local pos = decoded.__WATERMARK_POSITION;
 				Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				
+				-- Apply to existing watermark if it exists
+				if Compkiller.WatermarkFrame then
+					Compkiller.WatermarkFrame.Position = Compkiller.SavedWatermarkPosition;
+				end;
 			end;
 			
 			if decoded.__KEYBINDLIST_POSITION then
 				local pos = decoded.__KEYBINDLIST_POSITION;
 				Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				
+				-- Apply to existing keybind list if it exists
+				if Compkiller.KeybindListFrame then
+					Compkiller.KeybindListFrame.Position = Compkiller.SavedKeybindListPosition;
+				end;
 			end;
 
 			if Args.EnableNotify then
