@@ -5,8 +5,7 @@
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
-    Original: compkiller.net
-	5
+    Original: compkiller.net6
 --]]
 
 --- Export Types ---
@@ -8863,13 +8862,21 @@ function Compkiller.new(Config : Window)
 		return Args;
 	end;
 
-	function WindowArgs:Toggle(Value: boolean)
-			WindowArgs.IsOpen = not WindowArgs.IsOpen;
-
-			WindowArgs:Toggle(WindowArgs.IsOpen)
+	function WindowArgs:_ToggleUI()
+		WindowArgs.IsOpen = not WindowArgs.IsOpen;
+		
+		if WindowArgs.IsOpen then
+			Compkiller:_Animation(MainFrame, TweenInfo.new(0.2), {
+				Size = UDim2.new(0, Config.Scale.X.Offset, 0, Config.Scale.Y.Offset)
+			});
+		else
+			Compkiller:_Animation(MainFrame, TweenInfo.new(0.2), {
+				Size = UDim2.new(0, 0, 0, 0)
+			});
 		end;
+	end;
 
-		local Button = Compkiller:_Input(CloseWindow,function()
+	local Button = Compkiller:_Input(CloseWindow,function()
 			WindowArgs:_ToggleUI()
 		end)
 
