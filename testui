@@ -8506,11 +8506,11 @@ function Compkiller.new(Config : Window)
 			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
 				if ImageLabel.ClipsDescendants then
 					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 60, 0, 40)
+						Position = UDim2.new(0, 60, 0, 100)
 					})
 				else
 					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 10, 0, 40)
+						Position = UDim2.new(0, 10, 0, 100)
 					})
 				end;
 			end)
