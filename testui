@@ -8,6 +8,7 @@
     Original: compkiller.net
 --]]
 -- um
+print("um")
 --- Export Types ---
 
 export type cloneref = (target: Instance) -> Instance;
