@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	1
+	2
 --]]
 
 --- Export Types ---
@@ -8715,7 +8715,7 @@ function Compkiller.new(Config : Window)
 		Title.Position = UDim2.new(0, 0, 0, 0)
 		Title.Size = UDim2.new(1, 0, 0, 25)
 		Title.ZIndex = 151
-		Title.Font = Enum.Font.GothamBold
+		Title.Font = Enum.Font.GothamMedium
 		Title.Text = "keybinds"
 		Title.TextColor3 = Compkiller.Colors.SwitchColor
 		Title.TextSize = 12
@@ -8777,7 +8777,7 @@ function Compkiller.new(Config : Window)
 			KeybindName.BackgroundTransparency = 1
 			KeybindName.Size = UDim2.new(0.65, 0, 1, 0)
 			KeybindName.ZIndex = 152
-			KeybindName.Font = Enum.Font.Gotham
+			KeybindName.Font = Enum.Font.GothamMedium
 			KeybindName.Text = Name
 			KeybindName.TextColor3 = Compkiller.Colors.SwitchColor
 			KeybindName.TextSize = 10
