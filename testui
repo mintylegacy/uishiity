@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	4
+	5
 --]]
 
 --- Export Types ---
@@ -344,6 +344,8 @@ local Compkiller = {
 	},
 	ArcylicParent = CurrentCamera,
 	ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s; end,
+	WatermarkFrame = nil,
+	KeybindListFrame = nil,
 };
 
 Compkiller.Colors = {
@@ -9300,21 +9302,25 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			-- Load UI positions
 			if decoded.__WATERMARK_POSITION then
 				local pos = decoded.__WATERMARK_POSITION;
-				Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
-				
-				-- Apply to existing watermark if it exists
-				if Compkiller.WatermarkFrame then
-					Compkiller.WatermarkFrame.Position = Compkiller.SavedWatermarkPosition;
+				if pos and pos.X_Scale and pos.X_Offset and pos.Y_Scale and pos.Y_Offset then
+					Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+					
+					-- Apply to existing watermark if it exists
+					if Compkiller.WatermarkFrame then
+						Compkiller.WatermarkFrame.Position = Compkiller.SavedWatermarkPosition;
+					end;
 				end;
 			end;
 			
 			if decoded.__KEYBINDLIST_POSITION then
 				local pos = decoded.__KEYBINDLIST_POSITION;
-				Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
-				
-				-- Apply to existing keybind list if it exists
-				if Compkiller.KeybindListFrame then
-					Compkiller.KeybindListFrame.Position = Compkiller.SavedKeybindListPosition;
+				if pos and pos.X_Scale and pos.X_Offset and pos.Y_Scale and pos.Y_Offset then
+					Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+					
+					-- Apply to existing keybind list if it exists
+					if Compkiller.KeybindListFrame then
+						Compkiller.KeybindListFrame.Position = Compkiller.SavedKeybindListPosition;
+					end;
 				end;
 			end;
 
