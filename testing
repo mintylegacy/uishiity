@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	3
+	2
 --]]
 
 --- Export Types ---
@@ -8860,14 +8860,17 @@ function Compkiller.new(Config : Window)
 	end;
 
 	function WindowArgs:Toggle(Value: boolean)
-			WindowArgs.IsOpen = not WindowArgs.IsOpen;
+		WindowArgs.IsOpen = Value;
+		WindowOpen:Fire(Value);
+	end;
+	
+	function WindowArgs:_ToggleUI()
+		WindowArgs:Toggle(not WindowArgs.IsOpen);
+	end;
 
-			WindowArgs:Toggle(WindowArgs.IsOpen)
-		end;
-
-		local Button = Compkiller:_Input(CloseWindow,function()
-			WindowArgs:_ToggleUI()
-		end)
+	local Button = Compkiller:_Input(CloseWindow,function()
+		WindowArgs:_ToggleUI()
+	end)
 
 		if not Compkiller:_IsMobile() then
 
