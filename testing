@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	2
+	1
 --]]
 
 --- Export Types ---
@@ -8503,18 +8503,6 @@ function Compkiller.new(Config : Window)
 			Watermark.Position = UDim2.new(0, 10, 0, 40)
 			Watermark.Size = UDim2.new(0, 45, 0, 23)
 			Watermark.ZIndex = 150
-
-			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
-				if ImageLabel.ClipsDescendants then
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 60, 0, 40)
-					})
-				else
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 10, 0, 40)
-					})
-				end;
-			end)
 
 			UICorner.CornerRadius = UDim.new(0, 3)
 			UICorner.Parent = Watermark
