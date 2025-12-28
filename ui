@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	2
+	1
 --]]
 
 --- Export Types ---
@@ -8503,22 +8503,8 @@ function Compkiller.new(Config : Window)
 			Watermark.Position = UDim2.new(0, 10, 0, 40)
 			Watermark.Size = UDim2.new(0, 45, 0, 23)
 			Watermark.ZIndex = 150
-
-			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
-				if ImageLabel.ClipsDescendants then
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 60, 0, 40)
-					})
-				else
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(0, 10, 0, 40)
-					})
-				end;
-			end)
-
-			UICorner.CornerRadius = UDim.new(0, 3)
-			UICorner.Parent = Watermark
-
+		
+		Compkiller.WatermarkElement = Watermark
 			Logo.Name = Compkiller:_RandomString()
 			Logo.Parent = Watermark
 			Logo.AnchorPoint = Vector2.new(1, 0.5)
@@ -8572,11 +8558,8 @@ function Compkiller.new(Config : Window)
 			WaternarkList.BackgroundTransparency = 1.000
 			WaternarkList.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			WaternarkList.BorderSizePixel = 0
-			WaternarkList.Position = UDim2.new(0.5, 0, 0, 0)
-			WaternarkList.Size = UDim2.new(1, -10, 1, 0)
-			WaternarkList.ZIndex = 155
-			WaternarkList.ClipsDescendants = true
-
+		WaternarkList.Position = UDim2.new(0.5, 2, 0, -1)  -- right here
+		WaternarkList.Size = UDim2.new(1, -6, 1, 0)
 			UIListLayout.Parent = WaternarkList
 			UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -8700,6 +8683,9 @@ function Compkiller.new(Config : Window)
 		KeybindListFrame.Size = UDim2.new(0, 200, 0, 25)
 		KeybindListFrame.ZIndex = 150
 		KeybindListFrame.ClipsDescendants = true
+		
+		-- Store reference for config loading
+		Compkiller.KeybindListElement = KeybindListFrame;
 
 		table.insert(Compkiller.Elements.BGDBColor, {
 			Element = KeybindListFrame,
@@ -8765,17 +8751,18 @@ function Compkiller.new(Config : Window)
 			local KeybindFrame = Instance.new("Frame")
 			local KeybindName = Instance.new("TextLabel")
 			local KeybindKey = Instance.new("TextLabel")
+			local Separator = Instance.new("Frame")
 
 			KeybindFrame.Name = Compkiller:_RandomString()
 			KeybindFrame.Parent = KeybindContainer
 			KeybindFrame.BackgroundTransparency = 1
-			KeybindFrame.Size = UDim2.new(1, 0, 0, 18)
+			KeybindFrame.Size = UDim2.new(1, 0, 0, 20)
 			KeybindFrame.ZIndex = 152
 
 			KeybindName.Name = Compkiller:_RandomString()
 			KeybindName.Parent = KeybindFrame
 			KeybindName.BackgroundTransparency = 1
-			KeybindName.Size = UDim2.new(0.65, 0, 1, 0)
+			KeybindName.Size = UDim2.new(0.65, 0, 1, -2)
 			KeybindName.ZIndex = 152
 			KeybindName.Font = Enum.Font.GothamMedium
 			KeybindName.Text = Name
@@ -8793,7 +8780,7 @@ function Compkiller.new(Config : Window)
 			KeybindKey.Parent = KeybindFrame
 			KeybindKey.BackgroundTransparency = 1
 			KeybindKey.Position = UDim2.new(0.65, 0, 0, 0)
-			KeybindKey.Size = UDim2.new(0.35, 0, 1, 0)
+			KeybindKey.Size = UDim2.new(0.35, 0, 1, -2)
 			KeybindKey.ZIndex = 152
 			KeybindKey.Font = Enum.Font.GothamMedium
 			KeybindKey.Text = "[" .. Key .. "]"
@@ -8805,6 +8792,14 @@ function Compkiller.new(Config : Window)
 				Element = KeybindKey,
 				Property = 'TextColor3'
 			});
+
+			Separator.Name = Compkiller:_RandomString()
+			Separator.Parent = KeybindFrame
+			Separator.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+			Separator.BorderSizePixel = 0
+			Separator.Position = UDim2.new(0, 0, 1, -1)
+			Separator.Size = UDim2.new(1, 0, 0, 1)
+			Separator.ZIndex = 152
 
 			UpdateSize();
 
@@ -8851,14 +8846,17 @@ function Compkiller.new(Config : Window)
 	end;
 
 	function WindowArgs:Toggle(Value: boolean)
-			WindowArgs.IsOpen = not WindowArgs.IsOpen;
+		WindowArgs.IsOpen = Value;
+		WindowOpen:Fire(Value);
+	end;
+	
+	function WindowArgs:_ToggleUI()
+		WindowArgs:Toggle(not WindowArgs.IsOpen);
+	end;
 
-			WindowArgs:Toggle(WindowArgs.IsOpen)
-		end;
-
-		local Button = Compkiller:_Input(CloseWindow,function()
-			WindowArgs:_ToggleUI()
-		end)
+	local Button = Compkiller:_Input(CloseWindow,function()
+		WindowArgs:_ToggleUI()
+	end)
 
 		if not Compkiller:_IsMobile() then
 
@@ -8900,10 +8898,9 @@ function Compkiller.new(Config : Window)
 		UserInputService.InputBegan:Connect(function(Input,Typing)
 			if Typing then return end
 			
-			local inputKey = Input.KeyCode.Name
 			local configKey = typeof(Config.Keybind) == "EnumItem" and Config.Keybind.Name or Config.Keybind
 			
-			if inputKey == configKey then
+			if Input.KeyCode.Name == configKey or Input.UserInputType.Name == configKey then
 				WindowArgs:_ToggleUI()
 			end
 		end)
@@ -9289,12 +9286,22 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 			-- Load UI positions
 			if decoded.__WATERMARK_POSITION then
 				local pos = decoded.__WATERMARK_POSITION;
-				Compkiller.SavedWatermarkPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				local newPos = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				Compkiller.SavedWatermarkPosition = newPos;
+				-- Apply to actual UI element if it exists
+				if Compkiller.WatermarkElement then
+					Compkiller.WatermarkElement.Position = newPos;
+				end;
 			end;
 			
 			if decoded.__KEYBINDLIST_POSITION then
 				local pos = decoded.__KEYBINDLIST_POSITION;
-				Compkiller.SavedKeybindListPosition = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				local newPos = UDim2.new(pos.X_Scale, pos.X_Offset, pos.Y_Scale, pos.Y_Offset);
+				Compkiller.SavedKeybindListPosition = newPos;
+				-- Apply to actual UI element if it exists
+				if Compkiller.KeybindListElement then
+					Compkiller.KeybindListElement.Position = newPos;
+				end;
 			end;
 
 			if Args.EnableNotify then
