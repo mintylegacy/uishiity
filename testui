@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	35
+	1
 --]]
 
 --- Export Types ---
@@ -3185,8 +3185,8 @@ function Compkiller:_LoadOption(Value , TabSignal)
 			Config.Callback(Config.Default , Config.Transparency);
 		end);
 
-		ColorPicker:SetColor(Config.Default,Config.Transparency);
-		ColorPicker:Update()
+		ColorPickerPanel:SetColor(Config.Default,Config.Transparency);
+		ColorPickerPanel:Update()
 
 		local Args = {};
 
@@ -3196,9 +3196,9 @@ function Compkiller:_LoadOption(Value , TabSignal)
 			Config.Default = value;
 			Config.Transparency = opc;
 
-			ColorPicker:SetColor(value,opc)
+			ColorPickerPanel:SetColor(value,opc)
 
-			ColorPicker:Update()
+			ColorPickerPanel:Update()
 
 			Config.Callback(value,opc);
 		end;
@@ -3959,8 +3959,8 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 			Config.Callback(Config.Default , Config.Transparency);
 		end);
 
-		ColorPicker:SetColor(Config.Default,Config.Transparency);
-		ColorPicker:Update()
+		ColorPickerPanel:SetColor(Config.Default,Config.Transparency);
+		ColorPickerPanel:Update()
 
 		local Args = {};
 
