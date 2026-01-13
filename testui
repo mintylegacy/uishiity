@@ -1,5 +1,5 @@
 
---3
+--4
 		do
 			local found = false
 			local groupKey = nil
@@ -4058,8 +4058,8 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 			Config.Default = value;
 			Config.Transparency = opc;
 
-			ColorPicker:SetColor(value,opc);
-			ColorPicker:Update();
+			ColorPickerPanel:SetColor(value,opc);
+			ColorPickerPanel:Update();
 
 			Config.Callback(value,opc);
 		end;
