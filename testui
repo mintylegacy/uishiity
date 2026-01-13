@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	3
+	32
 --]]
 
 --- Export Types ---
@@ -3133,11 +3133,42 @@ function Compkiller:_LoadOption(Value , TabSignal)
 			Callback = function() end
 		});
 
-		local ColorPicker:Frame , ColorFrame: Frame = Value:AddLink('ColorPicker' , Config.Default);
+		local ColorPicker:Frame, ColorFrame: Frame
+		local reused = false
+		for _, child in ipairs(Parent:GetChildren()) do
+			if child:IsA('Frame') then
+				for _, gc in ipairs(child:GetChildren()) do
+					if gc:IsA('TextLabel') and gc.Text == Config.Name then
+						-- find LinkValues frame (frame that contains UIListLayout)
+						local linkFrame = nil
+						for _, c2 in ipairs(child:GetChildren()) do
+							if c2:IsA('Frame') then
+								for _, gc2 in ipairs(c2:GetChildren()) do
+									if gc2:IsA('UIListLayout') then
+										linkFrame = c2
+										break
+										end
+								end
+								if linkFrame then break end
+							end
+						end
+						if linkFrame then
+							ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
+							reused = true
+						end
+						break
+					end
+				end
+			end
+		end
+		if not reused then
+			local ColorPickerTemp, ColorFrameTemp = Value:AddLink('ColorPicker' , Config.Default)
+			ColorPicker, ColorFrame = ColorPickerTemp, ColorFrameTemp
+		end
 
 		local Button = Compkiller:_Input(ColorPicker);
 
-		local ColorPicker = Compkiller:_AddColorPickerPanel(Button,function(color,opc)
+		local ColorPickerPanel = Compkiller:_AddColorPickerPanel(Button,function(color,opc)
 			Config.Default = color;
 			Config.Transparency = opc;
 
@@ -3862,21 +3893,47 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 			Callback = function() end;
 		});
 
-		local Block = Compkiller:_CreateBlock(Signal);
-
-		Block:SetParent(Parent);
-
-		Block:SetText(Config.Name);
-
-		Block:SetLine(EnabledLine);
-
-		Block:SetVisible(Signal:GetValue());
-
-		local ColorPicker:Frame , ColorFrame: Frame = Block:AddLink('ColorPicker' , Config.Default);
+		-- try to reuse an existing block with same visible name
+		local Block = nil
+		local ColorPicker:Frame, ColorFrame: Frame
+		local reused = false
+		for _, child in ipairs(Parent:GetChildren()) do
+			if child:IsA('Frame') then
+				for _, gc in ipairs(child:GetChildren()) do
+					if gc:IsA('TextLabel') and gc.Text == Config.Name then
+						Block = child
+						-- find LinkValues frame
+						local linkFrame = nil
+						for _, c2 in ipairs(child:GetChildren()) do
+							if c2:IsA('Frame') then
+								for _, gc2 in ipairs(c2:GetChildren()) do
+									if gc2:IsA('UIListLayout') then
+										linkFrame = c2
+										break
+									end
+								end
+								if linkFrame then
+									ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
+									reused = true
+								end
+							end
+							break
+					end
+				end
+			end
+		end
+		if not reused then
+			Block = Compkiller:_CreateBlock(Signal);
+			Block:SetParent(Parent);
+			Block:SetText(Config.Name);
+			Block:SetLine(EnabledLine);
+			Block:SetVisible(Signal:GetValue());
+			ColorPicker, ColorFrame = Block:AddLink('ColorPicker' , Config.Default);
+		end
 
 		local Button = Compkiller:_Input(ColorPicker);
 
-		local ColorPicker = Compkiller:_AddColorPickerPanel(Button,function(color,opc)
+		local ColorPickerPanel = Compkiller:_AddColorPickerPanel(Button,function(color,opc)
 			Config.Default = color;
 			Config.Transparency = opc;
 
@@ -8558,11 +8615,8 @@ function Compkiller.new(Config : Window)
 			WaternarkList.BackgroundTransparency = 1.000
 			WaternarkList.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			WaternarkList.BorderSizePixel = 0
-			WaternarkList.Position = UDim2.new(0.5, 0, 0, 0)
-			WaternarkList.Size = UDim2.new(1, -10, 1, 0)
-			WaternarkList.ZIndex = 155
-			WaternarkList.ClipsDescendants = true
-
+		WaternarkList.Position = UDim2.new(0.5, 2, 0, -1)  -- right here
+		WaternarkList.Size = UDim2.new(1, -6, 1, 0)
 			UIListLayout.Parent = WaternarkList
 			UIListLayout.FillDirection = Enum.FillDirection.Horizontal
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
