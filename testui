@@ -1,5 +1,5 @@
 
---4
+--5
 		do
 			local found = false
 			local groupKey = nil
@@ -4028,8 +4028,12 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 				local a = string.match(s, "^([^_]+)")
 				if a then groupKey = a end
 			end
-			if groupKey and Block.SetAttribute then
-				Block:SetAttribute('CompkillerGroup', groupKey)
+			if groupKey then
+				if Block and Block.Root and Block.Root.SetAttribute then
+					Block.Root:SetAttribute('CompkillerGroup', groupKey)
+				elseif Block and Block.SetAttribute then
+					Block:SetAttribute('CompkillerGroup', groupKey)
+				end
 			end
 
 			ColorPicker, ColorFrame = Block:AddLink('ColorPicker' , Config.Default);
