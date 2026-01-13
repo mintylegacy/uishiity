@@ -6,7 +6,7 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Version: 2.3
     Original: compkiller.net
-	32
+	35
 --]]
 
 --- Export Types ---
@@ -3135,28 +3135,35 @@ function Compkiller:_LoadOption(Value , TabSignal)
 
 		local ColorPicker:Frame, ColorFrame: Frame
 		local reused = false
-		for _, child in ipairs(Parent:GetChildren()) do
-			if child:IsA('Frame') then
-				for _, gc in ipairs(child:GetChildren()) do
-					if gc:IsA('TextLabel') and gc.Text == Config.Name then
-						-- find LinkValues frame (frame that contains UIListLayout)
-						local linkFrame = nil
-						for _, c2 in ipairs(child:GetChildren()) do
-							if c2:IsA('Frame') then
-								for _, gc2 in ipairs(c2:GetChildren()) do
-									if gc2:IsA('UIListLayout') then
-										linkFrame = c2
-										break
+		do
+			local found = false
+			for _, child in ipairs(Parent:GetChildren()) do
+				if found then break end
+				if child:IsA('Frame') then
+					for _, gc in ipairs(child:GetChildren()) do
+						if gc:IsA('TextLabel') and gc.Text == Config.Name then
+							-- search for a Frame that contains a UIListLayout (the LinkValues container)
+							local linkFrame = nil
+							for _, c2 in ipairs(child:GetChildren()) do
+								if c2:IsA('Frame') then
+									for _, gc2 in ipairs(c2:GetChildren()) do
+										if gc2:IsA('UIListLayout') then
+											linkFrame = c2
+											break
 										end
+									end
 								end
 								if linkFrame then break end
 							end
+
+							if linkFrame then
+								ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
+								reused = true
+							end
+
+							found = true
+							break
 						end
-						if linkFrame then
-							ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
-							reused = true
-						end
-						break
 					end
 				end
 			end
@@ -3897,27 +3904,36 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 		local Block = nil
 		local ColorPicker:Frame, ColorFrame: Frame
 		local reused = false
-		for _, child in ipairs(Parent:GetChildren()) do
-			if child:IsA('Frame') then
-				for _, gc in ipairs(child:GetChildren()) do
-					if gc:IsA('TextLabel') and gc.Text == Config.Name then
-						Block = child
-						-- find LinkValues frame
-						local linkFrame = nil
-						for _, c2 in ipairs(child:GetChildren()) do
-							if c2:IsA('Frame') then
-								for _, gc2 in ipairs(c2:GetChildren()) do
-									if gc2:IsA('UIListLayout') then
-										linkFrame = c2
-										break
+		do
+			local found = false
+			for _, child in ipairs(Parent:GetChildren()) do
+				if found then break end
+				if child:IsA('Frame') then
+					for _, gc in ipairs(child:GetChildren()) do
+						if gc:IsA('TextLabel') and gc.Text == Config.Name then
+							Block = child
+							-- find LinkValues frame
+							local linkFrame = nil
+							for _, c2 in ipairs(child:GetChildren()) do
+								if c2:IsA('Frame') then
+									for _, gc2 in ipairs(c2:GetChildren()) do
+										if gc2:IsA('UIListLayout') then
+											linkFrame = c2
+											break
+										end
 									end
 								end
-								if linkFrame then
-									ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
-									reused = true
-								end
+								if linkFrame then break end
 							end
+
+							if linkFrame then
+								ColorPicker, ColorFrame = Compkiller:_AddLinkValue('ColorPicker', Config.Default, child, linkFrame, {Tween = TweenInfo.new(0.25)}, Signal)
+								reused = true
+							end
+
+							found = true
 							break
+						end
 					end
 				end
 			end
